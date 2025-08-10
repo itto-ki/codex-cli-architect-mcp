@@ -35,6 +35,9 @@ claude mcp add codex -- npx codex-cli-architect-mcp
 
 # With custom model configuration
 claude mcp add codex -e CODEX_MODEL=gpt-5 -- npx codex-cli-architect-mcp
+
+# With OpenAI API key
+claude mcp add codex -e OPENAI_API_KEY=your-api-key-here -- npx codex-cli-architect-mcp
 ```
 
 ### Other MCP Clients
@@ -48,6 +51,7 @@ Configure the MCP server in your client's settings file:
             "command": "npx",
             "args": ["codex-cli-architect-mcp"],
             "env": {
+                "OPENAI_API_KEY": "your-api-key-here",
                 "CODEX_MODEL": "gpt-5",
                 "CODEX_TIMEOUT": "300000"
             }
@@ -73,6 +77,7 @@ These tools are exposed through the MCP protocol and can be used by any MCP-comp
 
 Environment variables:
 
+- `OPENAI_API_KEY` - OpenAI API key for authentication (optional, uses ChatGPT login if not provided)
 - `CODEX_MODEL` - Model to use (default: gpt-5)
 - `CODEX_TIMEOUT` - Execution timeout in milliseconds (default: 300000)
 

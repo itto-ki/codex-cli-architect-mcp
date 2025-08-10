@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { EXECUTION_TIMEOUT } from '../constants.js';
+import { EXECUTION_TIMEOUT, OPENAI_API_KEY } from '../constants.js';
 import type { CodexExecutionOptions, CodexResponse } from '../types/index.js';
 import logger from './logger.js';
 
@@ -25,15 +25,25 @@ export async function executeCodexCommand(
   // Add the prompt as the last argument
   args.push(prompt);
 
-  logger.info('Executing Codex command', { model, prompt: `${prompt.substring(0, 100)}...` });
+  logger.info('Executing Codex command', {
+    model,
+    prompt: `${prompt.substring(0, 100)}...`,
+    usingApiKey: !!OPENAI_API_KEY,
+  });
 
   return new Promise((resolve) => {
     let output = '';
     let errorOutput = '';
     let timedOut = false;
 
+    // Prepare environment variables
+    const env = { ...process.env };
+    if (OPENAI_API_KEY) {
+      env.OPENAI_API_KEY = OPENAI_API_KEY;
+    }
+
     const codexProcess = spawn('codex', args, {
-      env: { ...process.env },
+      env,
     });
 
     const timeoutId = setTimeout(() => {
