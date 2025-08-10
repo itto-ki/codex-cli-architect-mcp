@@ -7,8 +7,13 @@ export const explainSchema = z.object({
   target: z
     .string()
     .min(1)
-    .describe('What to explain - feature/component (e.g., "authentication flow"), Git context (e.g., "recent commits", "changes in PR"), or concept'),
-  languages: z.array(z.string()).optional().describe('Programming languages involved (e.g., ["javascript", "sql"])'),
+    .describe(
+      'What to explain - feature/component (e.g., "authentication flow"), Git context (e.g., "recent commits", "changes in PR"), or concept'
+    ),
+  languages: z
+    .array(z.string())
+    .optional()
+    .describe('Programming languages involved (e.g., ["javascript", "sql"])'),
   model: z.string().optional().describe('AI model to use'),
 });
 

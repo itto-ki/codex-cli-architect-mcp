@@ -7,12 +7,17 @@ export const reviewSchema = z.object({
   target: z
     .string()
     .min(1)
-    .describe('What to review - feature/component (e.g., "user authentication"), or Git context (e.g., "git diff", "staged changes", "changes in feature-branch"). Codex will identify relevant files automatically'),
+    .describe(
+      'What to review - feature/component (e.g., "user authentication"), or Git context (e.g., "git diff", "staged changes", "changes in feature-branch"). Codex will identify relevant files automatically'
+    ),
   focus: z
     .array(z.enum(['security', 'performance', 'readability', 'best-practices', 'architecture']))
     .optional()
     .describe('Specific areas to focus on'),
-  languages: z.array(z.string()).optional().describe('Programming languages involved (e.g., ["typescript", "python"])'),
+  languages: z
+    .array(z.string())
+    .optional()
+    .describe('Programming languages involved (e.g., ["typescript", "python"])'),
   model: z.string().optional().describe('AI model to use'),
 });
 
