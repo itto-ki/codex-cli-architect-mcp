@@ -1,0 +1,52 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Test files
+**/*.test.*
+**/*.spec.*
+vitest.config.ts
+coverage/
+.nyc_output/
+
+# Development files
+.tool-versions
+.biome/
+biome.json
+tsconfig.json
+examples/
+
+# Git
+.git/
+.gitignore
+.claude/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Node modules (should be installed by user)
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# Documentation source
+IMPLEMENTATION.md
