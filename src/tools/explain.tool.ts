@@ -7,21 +7,25 @@ export const explainSchema = z.object({
   target: z
     .string()
     .min(1)
-    .describe('What to explain (e.g., specific files, functions, or concepts)'),
-  language: z.string().optional().describe('Programming language (for code explanations)'),
+    .describe('What to explain - feature/component (e.g., "authentication flow"), Git context (e.g., "recent commits", "changes in PR"), or concept'),
+  languages: z.array(z.string()).optional().describe('Programming languages involved (e.g., ["javascript", "sql"])'),
   model: z.string().optional().describe('AI model to use'),
 });
 
 export const codexExplainTool: ToolDefinition<z.infer<typeof explainSchema>> = {
   name: 'codex_explain',
   description:
-    'Get clear explanations of code or concepts. The MCP client should provide relevant files or context based on the target specification',
+    'Explain code, features, or changes. Codex examines the implementation, Git history, or conceptual design to provide comprehensive explanations',
   schema: explainSchema,
 
   async execute(args) {
-    const { target, language, model = DEFAULT_MODEL } = args;
+    const { target, languages, model = DEFAULT_MODEL } = args;
 
-    let prompt = `Explain the following${language ? ` (${language})` : ''}:\n\n${target}`;
+    let prompt = `Explain the following`;
+    if (languages && languages.length > 0) {
+      prompt += ` (${languages.join(', ')})`;
+    }
+    prompt += `:\n\n${target}`;
     prompt += '\n\nProvide a clear and detailed explanation.';
 
     const result = await executeCodexCommand(prompt, { model });

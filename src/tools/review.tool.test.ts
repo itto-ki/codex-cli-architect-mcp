@@ -7,7 +7,7 @@ vi.mock('../utils/codexExecutor');
 describe('Codex Review Tool', () => {
   it('should have correct metadata', () => {
     expect(codexReviewTool.name).toBe('codex_review');
-    expect(codexReviewTool.description).toContain('comprehensive code review');
+    expect(codexReviewTool.description).toContain('Review code');
   });
 
   it('should validate required target field', () => {
@@ -40,7 +40,7 @@ describe('Codex Review Tool', () => {
 
     expect(result).toBe('Code looks good with minor suggestions');
     expect(mockExecute).toHaveBeenCalledWith(
-      expect.stringContaining('security, performance, readability, best-practices'),
+      expect.stringContaining('security, performance, readability, best-practices, architecture'),
       expect.objectContaining({ model: 'gpt-5' })
     );
   });
@@ -60,27 +60,47 @@ describe('Codex Review Tool', () => {
 
     expect(result).toBe('Security issues found');
     expect(mockExecute).toHaveBeenCalledWith(
-      expect.stringContaining('focusing on security'),
+      expect.stringContaining('Focus areas: security'),
       expect.any(Object)
     );
   });
 
-  it('should include language when specified', async () => {
+  it('should include languages when specified', async () => {
     const mockExecute = vi.spyOn(codexExecutor, 'executeCodexCommand');
     mockExecute.mockResolvedValue({
       success: true,
-      output: 'Python code review results',
+      output: 'Multi-language code review results',
       exitCode: 0,
     });
 
     const result = await codexReviewTool.execute({
-      target: 'src/main.py',
-      language: 'python',
+      target: 'full-stack feature',
+      languages: ['typescript', 'python'],
     });
 
-    expect(result).toBe('Python code review results');
+    expect(result).toBe('Multi-language code review results');
     expect(mockExecute).toHaveBeenCalledWith(
-      expect.stringContaining('Language: python'),
+      expect.stringContaining('Languages involved: typescript, python'),
+      expect.any(Object)
+    );
+  });
+
+  it('should handle single language in array', async () => {
+    const mockExecute = vi.spyOn(codexExecutor, 'executeCodexCommand');
+    mockExecute.mockResolvedValue({
+      success: true,
+      output: 'TypeScript review',
+      exitCode: 0,
+    });
+
+    const result = await codexReviewTool.execute({
+      target: 'src/app.ts',
+      languages: ['typescript'],
+    });
+
+    expect(result).toBe('TypeScript review');
+    expect(mockExecute).toHaveBeenCalledWith(
+      expect.stringContaining('Languages involved: typescript'),
       expect.any(Object)
     );
   });
@@ -99,7 +119,7 @@ describe('Codex Review Tool', () => {
     });
 
     expect(mockExecute).toHaveBeenCalledWith(
-      expect.stringContaining('focusing on performance, security'),
+      expect.stringContaining('Focus areas: performance, security'),
       expect.any(Object)
     );
   });

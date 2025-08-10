@@ -7,7 +7,7 @@ vi.mock('../utils/codexExecutor');
 describe('Codex Explain Tool', () => {
   it('should have correct metadata', () => {
     expect(codexExplainTool.name).toBe('codex_explain');
-    expect(codexExplainTool.description).toContain('explanations of code or concepts');
+    expect(codexExplainTool.description).toContain('Explain code');
   });
 
   it('should validate required target field', () => {
@@ -45,22 +45,22 @@ describe('Codex Explain Tool', () => {
     );
   });
 
-  it('should handle explanation with language specified', async () => {
+  it('should handle explanation with languages specified', async () => {
     const mockExecute = vi.spyOn(codexExecutor, 'executeCodexCommand');
     mockExecute.mockResolvedValue({
       success: true,
-      output: 'TypeScript arrow function explanation',
+      output: 'Multi-language explanation',
       exitCode: 0,
     });
 
     const result = await codexExplainTool.execute({
-      target: 'const sum = (a: number, b: number): number => a + b;',
-      language: 'typescript',
+      target: 'API endpoint with database query',
+      languages: ['typescript', 'sql'],
     });
 
-    expect(result).toBe('TypeScript arrow function explanation');
+    expect(result).toBe('Multi-language explanation');
     expect(mockExecute).toHaveBeenCalledWith(
-      expect.stringContaining('(typescript)'),
+      expect.stringContaining('(typescript, sql)'),
       expect.any(Object)
     );
   });

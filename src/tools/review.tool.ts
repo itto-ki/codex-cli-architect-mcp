@@ -7,37 +7,37 @@ export const reviewSchema = z.object({
   target: z
     .string()
     .min(1)
-    .describe('Review target specification (e.g., file paths, "modified files", "staged changes")'),
+    .describe('What to review - feature/component (e.g., "user authentication"), or Git context (e.g., "git diff", "staged changes", "changes in feature-branch"). Codex will identify relevant files automatically'),
   focus: z
-    .array(z.enum(['security', 'performance', 'readability', 'best-practices']))
+    .array(z.enum(['security', 'performance', 'readability', 'best-practices', 'architecture']))
     .optional()
     .describe('Specific areas to focus on'),
-  language: z.string().optional().describe('Programming language'),
+  languages: z.array(z.string()).optional().describe('Programming languages involved (e.g., ["typescript", "python"])'),
   model: z.string().optional().describe('AI model to use'),
 });
 
 export const codexReviewTool: ToolDefinition<z.infer<typeof reviewSchema>> = {
   name: 'codex_review',
   description:
-    'Perform comprehensive code review. The MCP client should determine appropriate files based on the target specification - provide file paths, modified files, or relevant context',
+    'Review code for a feature, component, or Git changes. Codex analyzes the relevant implementation or modified files, providing contextual feedback and improvement suggestions',
   schema: reviewSchema,
 
   async execute(args) {
     const {
       target,
-      focus = ['security', 'performance', 'readability', 'best-practices'],
-      language,
+      focus = ['security', 'performance', 'readability', 'best-practices', 'architecture'],
+      languages,
       model = DEFAULT_MODEL,
     } = args;
 
-    let prompt = `Perform a code review focusing on ${focus.join(', ')}.\n`;
+    let prompt = `Review the following: ${target}\n`;
+    prompt += `Focus areas: ${focus.join(', ')}\n`;
 
-    if (language) {
-      prompt += `Language: ${language}\n`;
+    if (languages && languages.length > 0) {
+      prompt += `Languages involved: ${languages.join(', ')}\n`;
     }
 
-    prompt += `\nReview target: ${target}\n`;
-    prompt += `\nProvide detailed feedback with severity levels (high/medium/low).`;
+    prompt += `\nAnalyze the code and provide actionable feedback with severity levels (high/medium/low) for identified issues. Consider the context and purpose of the changes or feature.`;
 
     const result = await executeCodexCommand(prompt, { model });
 
